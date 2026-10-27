@@ -58,18 +58,18 @@ public class StandardMissionService {
     }
 
     public CommandResult move(Rover rover, Ground ground) {
-        requireSameGround(rover, ground);                      // 1
+        requireSameGround(rover, ground);
 
         CellPosition from = rover.position();
-        CellPosition destination = rover.nextPosition();        // 2
+        CellPosition destination = rover.nextPosition();
 
-        if (!ground.isWithinBounds(destination)) {              // 3
+        if (!ground.isWithinBounds(destination)) {
             return new CommandResult.Rejected(destination, MoveFailure.OUT_OF_BOUNDS);
         }
-        if (ground.hasObstacleAt(destination)) {                // 4
+        if (ground.hasObstacleAt(destination)) {
             return new CommandResult.Rejected(destination, MoveFailure.OBSTACLE);
         }
-        EnergyCost cost = rover.costOfNextMove();                // 5
+        EnergyCost cost = rover.costOfNextMove();
         if (!rover.hasEnoughFuelFor(cost)) {
             return new CommandResult.Rejected(destination, MoveFailure.INSUFFICIENT_FUEL);
         }

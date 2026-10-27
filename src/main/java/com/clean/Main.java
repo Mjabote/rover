@@ -2,6 +2,8 @@ package com.clean;
 
 import com.clean.application.MissionInputException;
 import com.clean.application.PlateauMissionRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -14,6 +16,8 @@ import java.util.List;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
     static final int EXIT_OK = 0;
     static final int EXIT_INPUT_ERROR = 1;
     static final int EXIT_USAGE = 2;
@@ -38,14 +42,17 @@ public class Main {
         Path inputFile = Path.of(args[0]);
         try {
             List<String> lines = Files.readAllLines(inputFile, StandardCharsets.UTF_8);
+            log.info("Read {} line(s) from {}", lines.size(), inputFile.toAbsolutePath());
             new PlateauMissionRunner().run(lines, out::println);
             out.flush();
             return EXIT_OK;
         } catch (NoSuchFileException e) {
             err.println("Error: input file not found: " + inputFile);
         } catch (IOException e) {
+            log.debug("Failed to read {}", inputFile, e);
             err.println("Error: cannot read input file " + inputFile + ": " + e.getMessage());
         } catch (MissionInputException e) {
+            log.debug("Rejected mission input from {}", inputFile, e);
             err.println("Error: " + e.getMessage());
         }
         return EXIT_INPUT_ERROR;

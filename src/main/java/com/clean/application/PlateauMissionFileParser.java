@@ -3,6 +3,8 @@ package com.clean.application;
 import com.clean.domain.model.CellPosition;
 import com.clean.domain.model.Direction;
 import com.clean.domain.model.RoverCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PlateauMissionFileParser {
+    private static final Logger log = LoggerFactory.getLogger(PlateauMissionFileParser.class);
+
     private static final Pattern PLATEAU_LINE = Pattern.compile("(\\d+)\\s+(\\d+)");
     private static final Pattern POSITION_LINE = Pattern.compile("(\\d+)\\s+(\\d+)\\s+(\\S+)");
 
@@ -41,6 +45,7 @@ public class PlateauMissionFileParser {
             int instructionLine = i + 2;
             rovers.add(parseRover(lines.get(i), positionLine, lines.get(i + 1), instructionLine));
         }
+        log.debug("Parsed mission: plateau upper-right ({}, {}), {} rover(s)", maxX, maxY, rovers.size());
         return new MissionPlan(maxX, maxY, rovers);
     }
 
