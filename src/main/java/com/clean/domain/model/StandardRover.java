@@ -42,11 +42,13 @@ public class StandardRover extends AbstractRover{
 
     @Override
     protected EnergyCost moveCost(CellPosition from, CellPosition to) {
+
         return energyStrategy.costOfMove(from, to);
     }
 
     @Override
     protected Direction turned(Direction current, Rotation rotation) {
+
         return turnStrategy.turn(current, rotation);
     }
 

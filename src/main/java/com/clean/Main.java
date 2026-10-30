@@ -2,6 +2,14 @@ package com.clean;
 
 import com.clean.application.MissionInputException;
 import com.clean.application.PlateauMissionRunner;
+import com.clean.config.ApplicationContext;
+import com.clean.config.BeansException;
+import com.clean.config.YamlApplicationContext;
+import com.clean.domain.factory.RoverCatalog;
+import com.clean.domain.factory.RoverFactory;
+import com.clean.domain.factory.RoverFactoryType;
+import com.clean.domain.factory.StandardRoverFactory;
+import com.clean.domain.model.EnergyCapacity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +29,6 @@ public class Main {
     static final int EXIT_OK = 0;
     static final int EXIT_INPUT_ERROR = 1;
     static final int EXIT_USAGE = 2;
-
     private Main() {
     }
 
@@ -31,6 +38,7 @@ public class Main {
             System.exit(status);
         }
     }
+    static final String DEFAULT_CONFIG = "application.yml";
 
     static int run(String[] args, PrintStream out, PrintStream err) {
         if (args.length != 1 || args[0].isBlank()) {
@@ -41,9 +49,14 @@ public class Main {
 
         Path inputFile = Path.of(args[0]);
         try {
+            ApplicationContext context = YamlApplicationContext.fromClasspath(DEFAULT_CONFIG);
+
+            PlateauMissionRunner runner = context.getBean(PlateauMissionRunner.class);
+            RoverFactory<?> factory = roverFactory(context);
+
             List<String> lines = Files.readAllLines(inputFile, StandardCharsets.UTF_8);
             log.info("Read {} line(s) from {}", lines.size(), inputFile.toAbsolutePath());
-            new PlateauMissionRunner().run(lines, out::println);
+            runner.run(lines, factory, out::println);
             out.flush();
             return EXIT_OK;
         } catch (NoSuchFileException e) {
@@ -51,10 +64,23 @@ public class Main {
         } catch (IOException e) {
             log.debug("Failed to read {}", inputFile, e);
             err.println("Error: cannot read input file " + inputFile + ": " + e.getMessage());
+        } catch (BeansException e) {
+            log.debug("Invalid configuration", e);
+            err.println("Error: invalid configuration: " + e.getMessage());
         } catch (MissionInputException e) {
             log.debug("Rejected mission input from {}", inputFile, e);
             err.println("Error: " + e.getMessage());
         }
         return EXIT_INPUT_ERROR;
+    }
+
+    /** The catalogue entry chosen by the property mission.rover-type. */
+    private static RoverFactory<?> roverFactory(ApplicationContext context) {
+        String name = context.getRequiredProperty("mission.rover-type").strip();
+        try {
+            return context.getBean(RoverCatalog.class).factoryFor(RoverFactoryType.valueOf(name));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            throw new BeansException("mission.rover-type=" + name + ": " + e.getMessage(), e);
+        }
     }
 }

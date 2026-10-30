@@ -1,0 +1,35 @@
+properties:
+  mission:
+    rover-type: STANDARD
+  hardware:
+    standard:
+      fuel-ml: 1000
+      battery-mah: 1000
+beans:
+  standardHardware:
+    class: com.clean.domain.model.EnergyCapacity
+    factory-method: of
+    args: [ "${hardware.standard.fuel-ml}", "${hardware.standard.battery-mah}" ]
+  standardFullEnergy:
+    factory-bean: standardHardware
+    factory-method: full
+  standardRoverFactory:
+    class: com.clean.domain.factory.StandardRoverFactory
+    args:
+      - ref: standardHardware
+      - ref: standardFullEnergy
+  roverCatalog:
+    class: com.clean.domain.factory.RoverCatalog
+    calls:
+      - method: register
+        args: [ STANDARD, { ref: standardRoverFactory } ]
+  instructionParser:
+    class: com.clean.application.InstructionParser
+    factory-method: standard
+  missionService:
+    class: com.clean.domain.service.StandardMissionService
+  missionRunner:
+    class: com.clean.application.PlateauMissionRunner
+    args:
+      - ref: instructionParser
+      - ref: missionService

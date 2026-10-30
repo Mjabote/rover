@@ -1,8 +1,8 @@
 package com.clean.application;
 
+import com.clean.domain.command.RoverCommand;
 import com.clean.domain.model.CellPosition;
 import com.clean.domain.model.Direction;
-import com.clean.domain.model.RoverCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,14 @@ public class PlateauMissionFileParser {
 
     private static final Pattern PLATEAU_LINE = Pattern.compile("(\\d+)\\s+(\\d+)");
     private static final Pattern POSITION_LINE = Pattern.compile("(\\d+)\\s+(\\d+)\\s+(\\S+)");
+    private final InstructionParser instructions;
 
+    public PlateauMissionFileParser(InstructionParser instructions) {
+        this.instructions = instructions;
+    }
+    public PlateauMissionFileParser() {
+        this(InstructionParser.standard());
+    }
     public MissionPlan parse(List<String> rawLines) {
         List<String> lines = withoutTrailingBlankLines(rawLines);
         if (lines.isEmpty()) {
@@ -67,7 +74,7 @@ public class PlateauMissionFileParser {
 
         List<RoverCommand> commands;
         try {
-            commands = InstructionParser.parse(instructionText.strip());
+            commands = instructions.parse(instructionText.strip());
         } catch (IllegalArgumentException e) {
             throw new MissionInputException(instructionLine, e.getMessage());
         }

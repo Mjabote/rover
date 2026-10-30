@@ -1,8 +1,8 @@
 package com.clean.application;
 
+import com.clean.domain.command.RoverCommand;
 import com.clean.domain.model.CellPosition;
 import com.clean.domain.model.Direction;
-import com.clean.domain.model.RoverCommand;
 
 import java.util.List;
 
