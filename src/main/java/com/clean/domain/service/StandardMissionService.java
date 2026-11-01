@@ -1,14 +1,17 @@
 package com.clean.domain.service;
 
+import com.clean.domain.model.geometry.CellPosition;
+import com.clean.domain.model.geometry.Direction;
+import com.clean.domain.model.ground.Ground;
+import com.clean.domain.model.ground.GroundIdentity;
+import com.clean.domain.model.ground.Terrain;
+import com.clean.domain.model.rover.Rover;
+import com.clean.domain.model.rover.RoverIdentity;
 import com.clean.domain.command.RoverCommand;
 import com.clean.domain.exception.InvalidPlacementException;
 import com.clean.domain.exception.PlateauMismatchException;
 import com.clean.domain.factory.RoverFactory;
-import com.clean.domain.model.*;
 
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class StandardMissionService implements MissionService {
@@ -33,21 +36,14 @@ public class StandardMissionService implements MissionService {
         return rover;
     }
     // command with pattern design make it extensible
+    @Override
     public CommandResult execute(Rover rover, Ground ground, RoverCommand command) {
         Objects.requireNonNull(command, "command must not be null");
         requireSameGround(rover, ground);
         return Objects.requireNonNull(command.execute(rover, ground), "command returned null");
     }
 
-    public List<CommandResult> executeAll(Rover rover, Ground ground, List<RoverCommand> commands) {
-        List<CommandResult> results = new ArrayList<>(commands.size());
-        for (RoverCommand command : commands) {
-            results.add(execute(rover, ground, command));
-        }
-        return results;
-    }
-
-    private static void validateStartingCell(Ground ground, CellPosition start) {
+    private static void validateStartingCell(Terrain ground, CellPosition start) {
         Objects.requireNonNull(start, "start must not be null");
         if (!ground.isWithinBounds(start)) {
             throw new InvalidPlacementException(start, "outside the ground");
@@ -57,7 +53,7 @@ public class StandardMissionService implements MissionService {
         }
     }
 
-    private static void requireSameGround(Rover rover, Ground ground) {
+    private static void requireSameGround(RoverIdentity rover, GroundIdentity ground) {
         Objects.requireNonNull(rover, "rover must not be null");
         Objects.requireNonNull(ground, "ground must not be null");
         if (!rover.groundId().equals(ground.id())) {

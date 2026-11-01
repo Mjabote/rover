@@ -1,7 +1,7 @@
 package com.clean.domain.exception;
 
-import com.clean.domain.model.GroundId;
-import com.clean.domain.model.RoverId;
+import com.clean.domain.model.ground.GroundId;
+import com.clean.domain.model.rover.RoverId;
 
 public class PlateauMismatchException extends RuntimeException{
 

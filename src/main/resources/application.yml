@@ -7,7 +7,7 @@ properties:
       battery-mah: 1000
 beans:
   standardHardware:
-    class: com.clean.domain.model.EnergyCapacity
+    class: com.clean.domain.model.energy.EnergyCapacity
     factory-method: of
     args: [ "${hardware.standard.fuel-ml}", "${hardware.standard.battery-mah}" ]
   standardFullEnergy:

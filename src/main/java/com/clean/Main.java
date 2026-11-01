@@ -3,13 +3,14 @@ package com.clean;
 import com.clean.application.MissionInputException;
 import com.clean.application.PlateauMissionRunner;
 import com.clean.config.ApplicationContext;
+import com.clean.config.BeanFactory;
 import com.clean.config.BeansException;
+import com.clean.config.PropertyResolver;
 import com.clean.config.YamlApplicationContext;
 import com.clean.domain.factory.RoverCatalog;
 import com.clean.domain.factory.RoverFactory;
 import com.clean.domain.factory.RoverFactoryType;
 import com.clean.domain.factory.StandardRoverFactory;
-import com.clean.domain.model.EnergyCapacity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,7 @@ public class Main {
             ApplicationContext context = YamlApplicationContext.fromClasspath(DEFAULT_CONFIG);
 
             PlateauMissionRunner runner = context.getBean(PlateauMissionRunner.class);
-            RoverFactory<?> factory = roverFactory(context);
+            RoverFactory<?> factory = roverFactory(context, context);
 
             List<String> lines = Files.readAllLines(inputFile, StandardCharsets.UTF_8);
             log.info("Read {} line(s) from {}", lines.size(), inputFile.toAbsolutePath());
@@ -75,10 +76,10 @@ public class Main {
     }
 
     /** The catalogue entry chosen by the property mission.rover-type. */
-    private static RoverFactory<?> roverFactory(ApplicationContext context) {
-        String name = context.getRequiredProperty("mission.rover-type").strip();
+    private static RoverFactory<?> roverFactory(PropertyResolver properties, BeanFactory beans) {
+        String name = properties.getRequiredProperty("mission.rover-type").strip();
         try {
-            return context.getBean(RoverCatalog.class).factoryFor(RoverFactoryType.valueOf(name));
+            return beans.getBean(RoverCatalog.class).factoryFor(RoverFactoryType.valueOf(name));
         } catch (IllegalArgumentException | IllegalStateException e) {
             throw new BeansException("mission.rover-type=" + name + ": " + e.getMessage(), e);
         }

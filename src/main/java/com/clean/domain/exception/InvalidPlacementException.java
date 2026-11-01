@@ -1,6 +1,6 @@
 package com.clean.domain.exception;
 
-import com.clean.domain.model.CellPosition;
+import com.clean.domain.model.geometry.CellPosition;
 
 public class InvalidPlacementException extends RuntimeException{
 

@@ -159,5 +159,4 @@ final class BeanReflection {
         return String.join(", ", parts);
     }
 
-
 }

@@ -1,21 +1,18 @@
 package com.clean.application;
 
+import com.clean.domain.model.ground.CellSize;
+import com.clean.domain.model.ground.ExplorationStats;
+import com.clean.domain.model.ground.Plateau;
+import com.clean.domain.model.rover.Rover;
+import com.clean.domain.model.rover.RoverPose;
 import com.clean.domain.exception.InvalidPlacementException;
 import com.clean.domain.factory.RoverFactory;
-import com.clean.domain.factory.StandardRoverFactory;
-import com.clean.domain.model.CellSize;
-import com.clean.domain.model.EnergyCapacity;
-import com.clean.domain.model.Plateau;
-import com.clean.domain.model.Rover;
 import com.clean.domain.service.CommandResult;
 import com.clean.domain.service.MissionService;
-import com.clean.domain.service.StandardMissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class PlateauMissionRunner {
@@ -24,7 +21,6 @@ public class PlateauMissionRunner {
     static final CellSize DEFAULT_CELL_SIZE = CellSize.ofMetre(1.0);
     private final PlateauMissionFileParser parser;
     private final MissionService missionService;
-
 
     public PlateauMissionRunner(InstructionParser instructions, MissionService missionService) {
         this.parser = new PlateauMissionFileParser(instructions);
@@ -59,8 +55,11 @@ public class PlateauMissionRunner {
             logResults(rover, roverPlan, results);
             output.accept(format(rover));
         }
-        log.info("Mission complete: {}/{} cells explored",
-                plateau.exploredCellCount(), plateau.totalCellCount());
+        logCompletion(plateau);
+    }
+
+    private static void logCompletion(ExplorationStats stats) {
+        log.info("Mission complete: {}/{} cells explored", stats.exploredCellCount(), stats.totalCellCount());
     }
 
     private static void logResults(Rover rover, RoverPlan roverPlan, List<CommandResult> results) {
@@ -78,7 +77,7 @@ public class PlateauMissionRunner {
                 rover.id(), rover.position(), rover.direction(), results.size(), rejected);
     }
 
-    static String format(Rover rover) {
+    static String format(RoverPose rover) {
         return rover.position().x() + " " + rover.position().y() + " " + rover.direction().name();
     }
 }

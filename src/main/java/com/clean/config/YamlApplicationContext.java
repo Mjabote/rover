@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class YamlApplicationContext implements ApplicationContext{
     private static final Logger log = LoggerFactory.getLogger(YamlApplicationContext.class);
     private static final Set<String> ROOT_KEYS = Set.of("properties", "beans");
@@ -124,7 +123,6 @@ public class YamlApplicationContext implements ApplicationContext{
         }
         return value;
     }
-
 
     private Object bean(String name) {
         Object existing = singletons.get(name);
@@ -241,7 +239,6 @@ public class YamlApplicationContext implements ApplicationContext{
         m.appendTail(out);
         return out.toString();
     }
-
 
     private static Class<?> loadClass(String className, String beanName) {
         try {

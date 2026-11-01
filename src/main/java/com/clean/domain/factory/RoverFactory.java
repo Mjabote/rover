@@ -1,9 +1,9 @@
 package com.clean.domain.factory;
 
-import com.clean.domain.model.CellPosition;
-import com.clean.domain.model.Direction;
-import com.clean.domain.model.GroundId;
-import com.clean.domain.model.Rover;
+import com.clean.domain.model.geometry.CellPosition;
+import com.clean.domain.model.geometry.Direction;
+import com.clean.domain.model.ground.GroundId;
+import com.clean.domain.model.rover.Rover;
 
 @FunctionalInterface
 public interface RoverFactory<R extends Rover> {

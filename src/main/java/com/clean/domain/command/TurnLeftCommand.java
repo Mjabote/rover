@@ -1,14 +1,20 @@
 package com.clean.domain.command;
 
-import com.clean.domain.model.Direction;
-import com.clean.domain.model.Ground;
-import com.clean.domain.model.Rover;
+import com.clean.domain.model.geometry.Direction;
+import com.clean.domain.model.ground.Ground;
+import com.clean.domain.model.rover.Rover;
+import com.clean.domain.model.rover.Steerable;
 import com.clean.domain.service.CommandResult;
 
 public final class TurnLeftCommand implements RoverCommand {
 
     @Override
     public CommandResult execute(Rover rover, Ground ground) {
+        return turn(rover);
+    }
+
+    /** A turn only needs a steerable rover; the ground is irrelevant. */
+    static CommandResult turn(Steerable rover) {
         Direction before = rover.direction();
         rover.turnLeft();
         return new CommandResult.Turned(before, rover.direction());

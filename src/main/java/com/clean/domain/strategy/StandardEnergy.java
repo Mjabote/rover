@@ -1,7 +1,7 @@
 package com.clean.domain.strategy;
 
-import com.clean.domain.model.CellPosition;
-import com.clean.domain.model.EnergyCost;
+import com.clean.domain.model.energy.EnergyCost;
+import com.clean.domain.model.geometry.CellPosition;
 
 public class StandardEnergy implements EnergyStrategy {
 

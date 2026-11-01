@@ -1,8 +1,8 @@
 package com.clean.domain.service;
 
-import com.clean.domain.model.CellPosition;
-import com.clean.domain.model.Direction;
-import com.clean.domain.model.EnergyCost;
+import com.clean.domain.model.energy.EnergyCost;
+import com.clean.domain.model.geometry.CellPosition;
+import com.clean.domain.model.geometry.Direction;
 
 public sealed interface CommandResult {
 
@@ -29,6 +29,5 @@ public sealed interface CommandResult {
             return false;
         }
     }
-
 
 }
